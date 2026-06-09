@@ -1,1 +1,1 @@
-export { initaliseCarousel } from './js/carousel3d';
+export { initialiseCarousel } from './js/carousel3d';
