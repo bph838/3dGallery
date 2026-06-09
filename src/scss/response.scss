@@ -1,0 +1,27 @@
+// Breakpoint variables
+$breakpoint-phone: 767px;
+$breakpoint-tablet: 1023px;
+$breakpoint-pc: 1024px;
+
+// Mixin that works per device
+@mixin respond($devices...) {
+  @each $device in $devices {
+    @if $device == phone {
+      @media (max-width: #{$breakpoint-phone}) {
+        @content;
+      }
+    } @else if $device == tablet {
+      @media (min-width: #{($breakpoint-phone + 1)}) and (max-width: #{$breakpoint-tablet}) {
+        @content;
+      }
+    } @else if $device == pc {
+      @media (min-width: #{$breakpoint-pc}) {
+        @content;
+      }
+    } @else {
+      @warn "Unknown device `#{$device}`. Use phone, tablet, or pc.";
+    }
+  }
+}
+
+

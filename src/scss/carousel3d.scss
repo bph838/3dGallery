@@ -1,0 +1,104 @@
+@use "./mixins.scss" as *;
+@use "./response.scss" as *;
+
+h1 {
+  text-align: center;
+  padding: 0.75em;
+}
+
+.carousel3D {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  height: 220px;
+  @include respond(pc) {
+    height: 400px;
+  }
+  @include respond(tablet) {
+    height: 300px;
+  }
+  display: block;
+  z-index: 102;
+  background-color: white;
+  text-align: center;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.element3D {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  //border: 2px solid red !important;
+}
+
+.carousel3DLeft {
+  width: 50%;
+  height: 100%;
+  left: 0;
+  background: black;
+  opacity: 0;
+  z-index: 101;
+  float: left;
+  position: relative;
+}
+
+.carousel3DRight {
+  width: 50%;
+  height: 100%;
+  background: black;
+  opacity: 0;
+  z-index: 101;
+  float: left;
+  position: relative;
+}
+
+.carousel3DLeft:hover {
+  opacity: 0.025;
+}
+
+.carousel3DRight:hover {
+  opacity: 0.025;
+}
+
+.sliderButtons {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.rotateButton {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.sliderControls {
+  margin-left: 25%;
+  width: 50%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sliderRow {
+  justify-content: center;
+  width: 100%;
+}
+
+.sliderControlItem {
+  width: 100%;
+}
+
+.carouselRangeInfo {
+  width: 100%;
+  display: inline-block;
+}
+
+.carouselImage {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  @include site-image-radius;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}

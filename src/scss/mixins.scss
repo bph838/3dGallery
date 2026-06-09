@@ -1,0 +1,48 @@
+@use "./response.scss" as *;
+
+$border-radius-big: 18px;
+$border-radius-med: 12px;
+$border-radius-small: 6px;
+
+@mixin line_break {
+  content: "\f519"; // your icon
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+
+  display: block;
+  width: 60%;
+  margin: 0.1em auto 0;
+
+  text-align: center;
+  font-size: 1.2rem;
+  color: #bdbaba;
+  line-height: 1;
+
+  padding: 0.4em 0; // vertical alignment
+
+  /* two line segments with a gap in the center */
+  background:
+    linear-gradient(#ccc, #ccc) left center / 45% 1px no-repeat,
+    linear-gradient(#ccc, #ccc) right center / 45% 1px no-repeat;
+}
+
+@mixin site-image-radius {
+  border-top-left-radius: $border-radius-med * 0.33;
+  border-top-right-radius: $border-radius-big * 0.33;
+  border-bottom-right-radius: $border-radius-small * 0.33;
+  border-bottom-left-radius: $border-radius-big * 0.33;
+
+  @include respond(pc) {
+    border-top-left-radius: $border-radius-med;
+    border-top-right-radius: $border-radius-big;
+    border-bottom-right-radius: $border-radius-small;
+    border-bottom-left-radius: $border-radius-big;
+  }
+
+  @include respond(tablet) {
+    border-top-left-radius: $border-radius-med * 0.75;
+    border-top-right-radius: $border-radius-big * 0.75;
+    border-bottom-right-radius: $border-radius-small * 0.75;
+    border-bottom-left-radius: $border-radius-big * 0.75;
+  }
+}

@@ -1,0 +1,1 @@
+export { initaliseCarousel } from './js/carousel3d';

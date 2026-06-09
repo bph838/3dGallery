@@ -1,0 +1,27 @@
+{
+  "name": "3dgallery",
+  "version": "1.0.0",
+  "description": "The component is meant to display a 3D rotating carousel for use on a webpage.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite demo",
+    "test": "vitest",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bph838/3dGallery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bph838/3dGallery/issues"
+  },
+  "homepage": "https://github.com/bph838/3dGallery#readme",
+  "devDependencies": {
+    "sass": "^1.100.0",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8"
+  }
+}
