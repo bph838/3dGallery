@@ -50,6 +50,23 @@ function fetchValidMovements(items) {
   return arr;
 }
 
+function waitForImages(items) {
+  const images = items
+    .map((item) => item.querySelector("img.carouselImage"))
+    .filter(Boolean);
+
+  return Promise.all(
+    images.map((img) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise((resolve) => {
+            img.addEventListener("load", resolve, { once: true });
+            img.addEventListener("error", resolve, { once: true });
+          }),
+    ),
+  );
+}
+
 export function initialiseCarousel(id) {
   const element = document.getElementById(id);
   if (!element) return;
@@ -64,6 +81,10 @@ function setCarousel3D(carouselEl) {
   attachClickDivs(carouselEl, items);
   carouselEl.dataset.rotation = "0";
   onRotateToFinal(carouselEl, items, 0);
+
+  waitForImages(items).then(() => {
+    carouselEl.dispatchEvent(new CustomEvent("carousel3d:loaded", { detail: { id: carouselEl.id } }));
+  });
 
   window.addEventListener("resize", () => {
     onRotateToFinal(carouselEl, items, Number(carouselEl.dataset.rotation) || 0);

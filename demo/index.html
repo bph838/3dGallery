@@ -54,6 +54,12 @@
       import { initialiseCarousel } from "../src/index.js";
       // mount it, poke at it, etc.
 
+      document
+        .getElementById("carousel3D")
+        .addEventListener("carousel3d:loaded", (e) => {
+          console.log("all images loaded for", e.detail.id);
+        });
+
       initialiseCarousel("carousel3D");
     </script>
   </body>
