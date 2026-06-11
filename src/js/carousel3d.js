@@ -4,6 +4,7 @@ import "../scss/carousel3d.scss";
 const config = {
   circleRatio: 0.45,
   speed: 2,
+  rotateFreeSpeed: 10,
   minimizeRatio: 0.8,
   opacityRatio: 0.45,
 };
@@ -203,7 +204,7 @@ export function onKeepRotating(direction) {
     if (timerHandle === 0) return;
     carouselEl.dataset.direction = direction;
     await onRotateTo(carouselEl, items, direction === "left" ? -1 : 1, false);
-  }, config.speed);
+  }, config.rotateFreeSpeed);
 }
 
 function onStopRotating() {
