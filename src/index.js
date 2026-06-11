@@ -1,1 +1,1 @@
-export { initialiseCarousel } from './js/carousel3d';
+export { initialiseCarousel, setConfig,onKeepRotating } from "./js/carousel3d";

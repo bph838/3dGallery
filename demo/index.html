@@ -51,13 +51,21 @@
       </div>-->
     </div>
     <script type="module">
-      import { initialiseCarousel } from "../src/index.js";
+      import { initialiseCarousel, onKeepRotating,setConfig } from "../src/index.js";
       // mount it, poke at it, etc.
 
       document
         .getElementById("carousel3D")
         .addEventListener("carousel3d:loaded", (e) => {
           console.log("all images loaded for", e.detail.id);
+          const config = {
+            circleRatio: 0.45,
+            speed: 10,
+            minimizeRatio: 0.8,
+            opacityRatio: 0.45,
+          };
+          setConfig(config);
+          onKeepRotating("right");
         });
 
       initialiseCarousel("carousel3D");

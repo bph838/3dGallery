@@ -2,10 +2,10 @@
 import "../scss/carousel3d.scss";
 
 const config = {
-  circleRatio:   0.45,
-  speed:         2,
+  circleRatio: 0.45,
+  speed: 2,
   minimizeRatio: 0.8,
-  opacityRatio:  0.45,
+  opacityRatio: 0.45,
 };
 
 export function setConfig(overrides) {
@@ -83,11 +83,17 @@ function setCarousel3D(carouselEl) {
   onRotateToFinal(carouselEl, items, 0);
 
   waitForImages(items).then(() => {
-    carouselEl.dispatchEvent(new CustomEvent("carousel3d:loaded", { detail: { id: carouselEl.id } }));
+    carouselEl.dispatchEvent(
+      new CustomEvent("carousel3d:loaded", { detail: { id: carouselEl.id } }),
+    );
   });
 
   window.addEventListener("resize", () => {
-    onRotateToFinal(carouselEl, items, Number(carouselEl.dataset.rotation) || 0);
+    onRotateToFinal(
+      carouselEl,
+      items,
+      Number(carouselEl.dataset.rotation) || 0,
+    );
   });
 }
 
@@ -102,8 +108,14 @@ function attachClickDivs(carouselEl, items) {
   nodeRight.className = "carousel3DRight";
   carouselEl.appendChild(nodeRight);
 
-  nodeLeft.addEventListener("click", () => onRotateTo(carouselEl, items, -steps, true));
-  nodeRight.addEventListener("click", () => onRotateTo(carouselEl, items, steps, true));
+  nodeLeft.addEventListener("click", () => {
+    onStopRotating();
+    onRotateTo(carouselEl, items, -steps, true);
+  });
+  nodeRight.addEventListener("click", () => {
+    onStopRotating();
+    onRotateTo(carouselEl, items, steps, true);
+  });
 }
 
 async function onRotateTo(carouselEl, items, degrees, snapToValid) {
@@ -138,12 +150,12 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
 async function onRotateToFinal(carouselEl, items, deg) {
   if (!items.length) return;
 
-  const width  = carouselEl.clientWidth;
+  const width = carouselEl.clientWidth;
   const height = carouselEl.clientHeight;
   const radius = width / 2;
-  const steps  = 360 / items.length;
+  const steps = 360 / items.length;
 
-  const elementW = width  * config.minimizeRatio;
+  const elementW = width * config.minimizeRatio;
   const elementH = height * config.minimizeRatio;
 
   let fixDeg = deg % 360;
@@ -151,26 +163,28 @@ async function onRotateToFinal(carouselEl, items, deg) {
   carouselEl.dataset.rotation = fixDeg.toString();
 
   for (let i = 0; i < items.length; i++) {
-    const delta    = rotateAngle(i * steps, deg);
-    const rawDist  = Math.cos(degreesToRadians(delta)) * radius;
+    const delta = rotateAngle(i * steps, deg);
+    const rawDist = Math.cos(degreesToRadians(delta)) * radius;
     const distance = fetchRealDistance(delta, rawDist, radius);
-    const x_raw    = Math.sin(degreesToRadians(delta)) * radius;
+    const x_raw = Math.sin(degreesToRadians(delta)) * radius;
 
-    const z        = (radius * 2 - distance) / (radius * 2);
-    const zPercent = (2 * radius - distance * config.circleRatio)  / (2 * radius);
-    const zOpacity = (2 * radius - distance * config.opacityRatio) / (2 * radius);
+    const z = (radius * 2 - distance) / (radius * 2);
+    const zPercent =
+      (2 * radius - distance * config.circleRatio) / (2 * radius);
+    const zOpacity =
+      (2 * radius - distance * config.opacityRatio) / (2 * radius);
 
     const sizedW = elementW * zPercent;
     const sizedH = elementH * zPercent;
-    const x = x_raw + width  / 2 - sizedW / 2;
-    const y =         height / 2 - sizedH / 2;
+    const x = x_raw + width / 2 - sizedW / 2;
+    const y = height / 2 - sizedH / 2;
 
     Object.assign(items[i].style, {
-      width:   `${sizedW}px`,
-      height:  `${sizedH}px`,
-      left:    `${x}px`,
-      top:     `${y}px`,
-      zIndex:  Math.floor(z * 100).toString(),
+      width: `${sizedW}px`,
+      height: `${sizedH}px`,
+      left: `${x}px`,
+      top: `${y}px`,
+      zIndex: Math.floor(z * 100).toString(),
       opacity: zOpacity.toFixed(2),
     });
   }
@@ -178,7 +192,7 @@ async function onRotateToFinal(carouselEl, items, deg) {
   await sleep(config.speed);
 }
 
-function onKeepRotating(direction) {
+export function onKeepRotating(direction) {
   onStopRotating();
 
   const carouselEl = document.querySelector(".carousel3D");
@@ -200,8 +214,8 @@ function onStopRotating() {
   const carouselEl = document.querySelector(".carousel3D");
   if (!carouselEl?.dataset?.rotation) return;
 
-  const direction    = carouselEl.dataset.direction || "";
-  const currentDeg   = parseInt(carouselEl.dataset.rotation);
+  const direction = carouselEl.dataset.direction || "";
+  const currentDeg = parseInt(carouselEl.dataset.rotation);
   carouselEl.dataset.direction = "";
 
   setTimeout(() => onResetToClosest(carouselEl, currentDeg, direction), 1);
@@ -212,8 +226,9 @@ async function onResetToClosest(carouselEl, degreesCurrent, direction) {
   const items = [...carouselEl.querySelectorAll(".element3D")];
   if (!items.length) return;
 
-  const degreesPerStep     = 360 / items.length;
-  const closestFloor       = Math.floor(degreesCurrent / degreesPerStep) * degreesPerStep;
+  const degreesPerStep = 360 / items.length;
+  const closestFloor =
+    Math.floor(degreesCurrent / degreesPerStep) * degreesPerStep;
 
   if (direction === "left") {
     for (let d = degreesCurrent; d >= closestFloor; d--) {
