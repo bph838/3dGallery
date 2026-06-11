@@ -3,8 +3,7 @@
   <head>
     <title>Carousel3D Demo</title>
   </head>
-  <body>
-    <p>demo</p>
+  <body>    
     <div id="carousel3D" class="carousel3D">
       <div class="element3D">
         <img
@@ -61,12 +60,12 @@
           const config = {
             circleRatio: 0.45,
             speed: 2,
-            rotateFreeSpeed:10,
+            rotateFreeSpeed:100,
             minimizeRatio: 0.8,
             opacityRatio: 0.45,
           };
           setConfig(config);
-          onKeepRotating("right");
+          onKeepRotating("left");
         });
 
       initialiseCarousel("carousel3D");

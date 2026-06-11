@@ -148,7 +148,7 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
   }
 }
 
-async function onRotateToFinal(carouselEl, items, deg) {
+async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
   if (!items.length) return;
 
   const width = carouselEl.clientWidth;
@@ -190,7 +190,7 @@ async function onRotateToFinal(carouselEl, items, deg) {
     });
   }
 
-  await sleep(config.speed);
+  if (!skipSleep) await sleep(config.speed);
 }
 
 export function onKeepRotating(direction) {
@@ -199,24 +199,39 @@ export function onKeepRotating(direction) {
   const carouselEl = document.querySelector(".carousel3D");
   if (!carouselEl) return;
   const items = [...carouselEl.querySelectorAll(".element3D")];
+  if (!items.length) return;
 
-  timerHandle = setInterval(async () => {
+  const degreesPerSecond = 1000 / config.rotateFreeSpeed;
+  let lastTime = performance.now();
+
+  const step = async (now) => {
     if (timerHandle === 0) return;
+
+    const elapsedSeconds = (now - lastTime) / 1000;
+    lastTime = now;
+
     carouselEl.dataset.direction = direction;
-    await onRotateTo(carouselEl, items, direction === "left" ? -1 : 1, false);
-  }, config.rotateFreeSpeed);
+    const currentDeg = parseFloat(carouselEl.dataset.rotation) || 0;
+    const delta = (direction === "left" ? -1 : 1) * degreesPerSecond * elapsedSeconds;
+    await onRotateToFinal(carouselEl, items, currentDeg + delta, true);
+
+    if (timerHandle === 0) return;
+    timerHandle = requestAnimationFrame(step);
+  };
+
+  timerHandle = requestAnimationFrame(step);
 }
 
 function onStopRotating() {
   if (timerHandle === 0) return;
-  clearInterval(timerHandle);
+  cancelAnimationFrame(timerHandle);
   timerHandle = 0;
 
   const carouselEl = document.querySelector(".carousel3D");
   if (!carouselEl?.dataset?.rotation) return;
 
   const direction = carouselEl.dataset.direction || "";
-  const currentDeg = parseInt(carouselEl.dataset.rotation);
+  const currentDeg = parseFloat(carouselEl.dataset.rotation);
   carouselEl.dataset.direction = "";
 
   setTimeout(() => onResetToClosest(carouselEl, currentDeg, direction), 1);
@@ -232,12 +247,13 @@ async function onResetToClosest(carouselEl, degreesCurrent, direction) {
     Math.floor(degreesCurrent / degreesPerStep) * degreesPerStep;
 
   if (direction === "left") {
-    for (let d = degreesCurrent; d >= closestFloor; d--) {
-      await onRotateToFinal(carouselEl, items, d);
+    for (let d = degreesCurrent; d > closestFloor; d--) {
+      await onRotateToFinal(carouselEl, items, Math.max(d - 1, closestFloor));
     }
   } else if (direction === "right") {
-    for (let d = degreesCurrent; d <= closestFloor + degreesPerStep; d++) {
-      await onRotateToFinal(carouselEl, items, d);
+    const target = closestFloor + degreesPerStep;
+    for (let d = degreesCurrent; d < target; d++) {
+      await onRotateToFinal(carouselEl, items, Math.min(d + 1, target));
     }
   } else {
     await onRotateToFinal(carouselEl, items, degreesCurrent);
