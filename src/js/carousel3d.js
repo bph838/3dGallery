@@ -6,7 +6,7 @@ const config = {
   speed: 2,
   rotateFreeSpeed: 10,
   minimizeRatio: 0.8,
-  opacityRatio: 0.45,
+  darknessRatio: 0.45,
 };
 
 export function setConfig(overrides) {
@@ -172,8 +172,8 @@ async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
     const z = (radius * 2 - distance) / (radius * 2);
     const zPercent =
       (2 * radius - distance * config.circleRatio) / (2 * radius);
-    const zOpacity =
-      (2 * radius - distance * config.opacityRatio) / (2 * radius);
+    const zDarkness =
+      (2 * radius - distance * config.darknessRatio) / (2 * radius);
 
     const sizedW = elementW * zPercent;
     const sizedH = elementH * zPercent;
@@ -186,7 +186,7 @@ async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
       left: `${x}px`,
       top: `${y}px`,
       zIndex: Math.floor(z * 100).toString(),
-      opacity: zOpacity.toFixed(2),
+      filter: `brightness(${zDarkness.toFixed(2)})`,
     });
   }
 
@@ -212,7 +212,8 @@ export function onKeepRotating(direction) {
 
     carouselEl.dataset.direction = direction;
     const currentDeg = parseFloat(carouselEl.dataset.rotation) || 0;
-    const delta = (direction === "left" ? -1 : 1) * degreesPerSecond * elapsedSeconds;
+    const delta =
+      (direction === "left" ? -1 : 1) * degreesPerSecond * elapsedSeconds;
     await onRotateToFinal(carouselEl, items, currentDeg + delta, true);
 
     if (timerHandle === 0) return;
