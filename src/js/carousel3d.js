@@ -7,13 +7,15 @@ const config = {
   rotateFreeSpeed: 10,
   minimizeRatio: 0.8,
   darknessRatio: 0.45,
+  waitTouchTimer: 5000,
 };
 
 export function setConfig(overrides) {
   Object.assign(config, overrides);
 }
 
-let timerHandle = 0;
+let timerAnimation = 0;
+let timerWaitTouch = 0;
 
 function to2dp(n) {
   return Math.round((n + Number.EPSILON) * 100) / 100;
@@ -119,8 +121,25 @@ function attachClickDivs(carouselEl, items) {
   });
 }
 
+function sendTouchEvent(carouselEl) {
+  if (timerWaitTouch !== 0) clearTimeout(timerWaitTouch);
+  console.log("sendTouchEvent fired");
+
+  carouselEl.dispatchEvent(
+    new CustomEvent("carousel3d:touched", { detail: { id: carouselEl.id } }),
+  );
+}
+
 async function onRotateTo(carouselEl, items, degrees, snapToValid) {
   if (!carouselEl?.dataset) return;
+
+  //touch timer
+  if (timerWaitTouch !== 0) clearTimeout(timerWaitTouch);
+  timerWaitTouch = setTimeout(
+    sendTouchEvent,
+    config.waitTouchTimer,
+    carouselEl,
+  );
 
   const currentDeg = parseInt(carouselEl.dataset.rotation) || 0;
 
@@ -205,7 +224,7 @@ export function onKeepRotating(direction) {
   let lastTime = performance.now();
 
   const step = async (now) => {
-    if (timerHandle === 0) return;
+    if (timerAnimation === 0) return;
 
     const elapsedSeconds = (now - lastTime) / 1000;
     lastTime = now;
@@ -216,17 +235,17 @@ export function onKeepRotating(direction) {
       (direction === "left" ? -1 : 1) * degreesPerSecond * elapsedSeconds;
     await onRotateToFinal(carouselEl, items, currentDeg + delta, true);
 
-    if (timerHandle === 0) return;
-    timerHandle = requestAnimationFrame(step);
+    if (timerAnimation === 0) return;
+    timerAnimation = requestAnimationFrame(step);
   };
 
-  timerHandle = requestAnimationFrame(step);
+  timerAnimation = requestAnimationFrame(step);
 }
 
 function onStopRotating() {
-  if (timerHandle === 0) return;
-  cancelAnimationFrame(timerHandle);
-  timerHandle = 0;
+  if (timerAnimation === 0) return;
+  cancelAnimationFrame(timerAnimation);
+  timerAnimation = 0;
 
   const carouselEl = document.querySelector(".carousel3D");
   if (!carouselEl?.dataset?.rotation) return;

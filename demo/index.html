@@ -3,7 +3,7 @@
   <head>
     <title>Carousel3D Demo</title>
   </head>
-  <body>    
+  <body>
     <div id="carousel3D" class="carousel3D">
       <div class="element3D">
         <img
@@ -50,7 +50,11 @@
       </div>-->
     </div>
     <script type="module">
-      import { initialiseCarousel, onKeepRotating,setConfig } from "../src/index.js";
+      import {
+        initialiseCarousel,
+        onKeepRotating,
+        setConfig,
+      } from "../src/index.js";
       // mount it, poke at it, etc.
 
       document
@@ -60,7 +64,7 @@
           const config = {
             circleRatio: 0.45,
             speed: 2,
-            rotateFreeSpeed:100,
+            rotateFreeSpeed: 100,
             minimizeRatio: 0.8,
             opacityRatio: 0.45,
           };
@@ -69,6 +73,12 @@
         });
 
       initialiseCarousel("carousel3D");
+
+      document
+        .getElementById(carouselId)
+        .addEventListener("carousel3d:touched", (e) => {
+          console.log(`Touch event end ${carouselId}`);
+        });
     </script>
   </body>
 </html>
