@@ -4,7 +4,7 @@ import "../scss/carousel3d.scss";
 const config = {
   circleRatio: 0.45,
   speed: 2,
-  rotateFreeSpeed: 10,
+  rotateFreeSpeed: 100,
   minimizeRatio: 0.8,
   darknessRatio: 0.45,
   waitTouchTimer: 5000,
@@ -161,10 +161,26 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
 
   const totalSteps = Math.abs(target - currentDeg);
   const direction = target > currentDeg ? 1 : -1;
+  const totalDuration = totalSteps * config.speed;
 
-  for (let i = 0; i <= totalSteps; i++) {
-    await onRotateToFinal(carouselEl, items, currentDeg + i * direction);
-  }
+  return new Promise((resolve) => {
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      const t = Math.min((now - startTime) / totalDuration, 1);
+      // sine ease-in-out: slow start, fast middle, slow stop
+      const eased = -(Math.cos(Math.PI * t) - 1) / 2;
+      console.log(`${  currentDeg + eased * totalSteps * direction}`);
+      onRotateToFinal(carouselEl, items, currentDeg + eased * totalSteps * direction, true);
+      if (t < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    };
+
+    requestAnimationFrame(animate);
+  });
 }
 
 async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
