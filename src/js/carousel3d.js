@@ -112,12 +112,20 @@ function attachClickDivs(carouselEl, items) {
   carouselEl.appendChild(nodeRight);
 
   nodeLeft.addEventListener("click", () => {
-    onStopRotating();
-    onRotateTo(carouselEl, items, -steps, true);
+    if (isRotating()) {
+      onStopRotating();
+    } else {
+      onStopRotating();
+      onRotateTo(carouselEl, items, -steps, true);
+    }
   });
   nodeRight.addEventListener("click", () => {
-    onStopRotating();
-    onRotateTo(carouselEl, items, steps, true);
+    if (isRotating()) {
+      onStopRotating();
+    } else {
+      onStopRotating();
+      onRotateTo(carouselEl, items, steps, true);
+    }
   });
 }
 
@@ -170,8 +178,13 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
       const t = Math.min((now - startTime) / totalDuration, 1);
       // sine ease-in-out: slow start, fast middle, slow stop
       const eased = -(Math.cos(Math.PI * t) - 1) / 2;
-      console.log(`${  currentDeg + eased * totalSteps * direction}`);
-      onRotateToFinal(carouselEl, items, currentDeg + eased * totalSteps * direction, true);
+      console.log(`${currentDeg + eased * totalSteps * direction}`);
+      onRotateToFinal(
+        carouselEl,
+        items,
+        currentDeg + eased * totalSteps * direction,
+        true,
+      );
       if (t < 1) {
         requestAnimationFrame(animate);
       } else {
@@ -185,6 +198,8 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
 
 async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
   if (!items.length) return;
+
+  console.log(`onRotateToFinal deg:${deg}`);
 
   const width = carouselEl.clientWidth;
   const height = carouselEl.clientHeight;
@@ -256,6 +271,14 @@ export function onKeepRotating(direction) {
   };
 
   timerAnimation = requestAnimationFrame(step);
+}
+
+function isRotating() {
+  const carouselEl = document.querySelector(".carousel3D");
+  if (!carouselEl?.dataset?.rotation) return false;
+
+  if (carouselEl.dataset.direction.length > 0) return true;
+  else return false;
 }
 
 function onStopRotating() {

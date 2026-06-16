@@ -17,7 +17,7 @@
           class="carouselImage"
         />
       </div>
-      <!---
+
       <div class="element3D">
         <img
           src="https://siteimages.gmfc.uk/carousel/carousel-03.jpg"
@@ -42,14 +42,13 @@
           class="carouselImage"
         />
       </div>
-      -->
-      <!--
+
       <div class="element3D">
         <img
           src="https://siteimages.gmfc.uk/carousel/carousel-07.jpg"
           class="carouselImage"
         />
-      </div>-->
+      </div>
     </div>
     <script type="module">
       import {
@@ -65,10 +64,11 @@
           console.log("all images loaded for", e.detail.id);
           const config = {
             circleRatio: 0.45,
-            speed: 2,
+            speed: 15,
             rotateFreeSpeed: 100,
             minimizeRatio: 0.8,
-            opacityRatio: 0.45,
+            darknessRatio: 0.45,
+            waitTouchTimer: 5000,
           };
           setConfig(config);
           onKeepRotating("left");
@@ -81,6 +81,26 @@
         .addEventListener("carousel3d:touched", (e) => {
           console.log(`Touch event end ${carouselId}`);
         });
+
+      document
+        .getElementById(carouselId)
+        .addEventListener("carousel3d:touched", (e) => {
+          console.log(`All images loaded for ${carouselId}`);
+          slowSpin(carouselId);
+        });
+
+      function slowSpin(Id) {
+        const config = {
+          circleRatio: 0.45,
+          speed: 15,
+          rotateFreeSpeed: 100,
+          minimizeRatio: 0.8,
+          darknessRatio: 0.45,
+          waitTouchTimer: 5000,
+        };
+        setConfig(config);
+        onKeepRotating("left");
+      }
     </script>
   </body>
 </html>
