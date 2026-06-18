@@ -57,9 +57,9 @@
         setConfig,
       } from "../src/index.js";
       // mount it, poke at it, etc.
-
+      const carousel3D = "carousel3D";
       document
-        .getElementById("carousel3D")
+        .getElementById(carousel3D)
         .addEventListener("carousel3d:loaded", (e) => {
           console.log("all images loaded for", e.detail.id);
           const config = {
@@ -74,16 +74,16 @@
           onKeepRotating("left");
         });
 
-      initialiseCarousel("carousel3D");
+      initialiseCarousel(carousel3D);
 
       document
-        .getElementById(carouselId)
+        .getElementById(carousel3D)
         .addEventListener("carousel3d:touched", (e) => {
           console.log(`Touch event end ${carouselId}`);
         });
 
       document
-        .getElementById(carouselId)
+        .getElementById(carousel3D)
         .addEventListener("carousel3d:touched", (e) => {
           console.log(`All images loaded for ${carouselId}`);
           slowSpin(carouselId);

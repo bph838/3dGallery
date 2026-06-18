@@ -131,7 +131,6 @@ function attachClickDivs(carouselEl, items) {
 
 function sendTouchEvent(carouselEl) {
   if (timerWaitTouch !== 0) clearTimeout(timerWaitTouch);
-  console.log("sendTouchEvent fired");
 
   carouselEl.dispatchEvent(
     new CustomEvent("carousel3d:touched", { detail: { id: carouselEl.id } }),
@@ -178,7 +177,6 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
       const t = Math.min((now - startTime) / totalDuration, 1);
       // sine ease-in-out: slow start, fast middle, slow stop
       const eased = -(Math.cos(Math.PI * t) - 1) / 2;
-      console.log(`${currentDeg + eased * totalSteps * direction}`);
       onRotateToFinal(
         carouselEl,
         items,
@@ -198,8 +196,6 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
 
 async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
   if (!items.length) return;
-
-  console.log(`onRotateToFinal deg:${deg}`);
 
   const width = carouselEl.clientWidth;
   const height = carouselEl.clientHeight;
