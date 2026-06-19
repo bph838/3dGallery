@@ -71,7 +71,7 @@
             waitTouchTimer: 5000,
           };
           setConfig(config);
-          onKeepRotating("right");
+          onKeepRotating("left");
         });
 
       initialiseCarousel(carousel3D);
@@ -79,14 +79,14 @@
       document
         .getElementById(carousel3D)
         .addEventListener("carousel3d:touched", (e) => {
-          console.log(`Touch event end ${carouselId}`);
+          console.log(`Touch event end ${carousel3D}`);
         });
 
       document
         .getElementById(carousel3D)
         .addEventListener("carousel3d:touched", (e) => {
-          console.log(`All images loaded for ${carouselId}`);
-          slowSpin(carouselId);
+          console.log(`All images loaded for ${carousel3D}`);
+          slowSpin(carousel3D);
         });
 
       function slowSpin(Id) {

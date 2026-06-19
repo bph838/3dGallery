@@ -140,13 +140,7 @@ function sendTouchEvent(carouselEl) {
 async function onRotateTo(carouselEl, items, degrees, snapToValid) {
   if (!carouselEl?.dataset) return;
 
-  //touch timer
-  if (timerWaitTouch !== 0) clearTimeout(timerWaitTouch);
-  timerWaitTouch = setTimeout(
-    sendTouchEvent,
-    config.waitTouchTimer,
-    carouselEl,
-  );
+  resetTouchTimer(carouselEl);
 
   const currentDeg = parseInt(carouselEl.dataset.rotation) || 0;
 
@@ -194,8 +188,15 @@ async function onRotateTo(carouselEl, items, degrees, snapToValid) {
   });
 }
 
+function resetTouchTimer(element) {
+  if (timerWaitTouch !== 0) clearTimeout(timerWaitTouch);
+  timerWaitTouch = setTimeout(sendTouchEvent, config.waitTouchTimer, element);
+}
+
 async function onRotateToFinal(carouselEl, items, deg, skipSleep) {
   if (!items.length) return;
+
+  resetTouchTimer(carouselEl);
 
   const width = carouselEl.clientWidth;
   const height = carouselEl.clientHeight;
