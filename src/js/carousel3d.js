@@ -113,7 +113,7 @@ function attachClickDivs(carouselEl, items) {
 
   nodeLeft.addEventListener("click", () => {
     if (isRotating()) {
-      onStopRotating();
+      onStopRotating("nodeleft");
     } else {
       onStopRotating();
       onRotateTo(carouselEl, items, -steps, true);
@@ -121,7 +121,7 @@ function attachClickDivs(carouselEl, items) {
   });
   nodeRight.addEventListener("click", () => {
     if (isRotating()) {
-      onStopRotating();
+      onStopRotating("noderight");
     } else {
       onStopRotating();
       onRotateTo(carouselEl, items, steps, true);
@@ -277,7 +277,7 @@ function isRotating() {
   else return false;
 }
 
-function onStopRotating() {
+function onStopRotating(nodePressed = "none") {
   if (timerAnimation === 0) return;
   cancelAnimationFrame(timerAnimation);
   timerAnimation = 0;
@@ -289,10 +289,18 @@ function onStopRotating() {
   const currentDeg = parseFloat(carouselEl.dataset.rotation);
   carouselEl.dataset.direction = "";
 
-  setTimeout(() => onResetToClosest(carouselEl, currentDeg, direction), 1);
+  setTimeout(
+    () => onResetToClosest(carouselEl, currentDeg, direction, nodePressed),
+    1,
+  );
 }
 
-async function onResetToClosest(carouselEl, degreesCurrent, direction) {
+async function onResetToClosest(
+  carouselEl,
+  degreesCurrent,
+  direction,
+  nodePressed = "none",
+) {
   if (!carouselEl) return;
   const items = [...carouselEl.querySelectorAll(".element3D")];
   if (!items.length) return;
@@ -302,13 +310,43 @@ async function onResetToClosest(carouselEl, degreesCurrent, direction) {
     Math.floor(degreesCurrent / degreesPerStep) * degreesPerStep;
 
   if (direction === "left") {
-    for (let d = degreesCurrent; d > closestFloor; d--) {
-      await onRotateToFinal(carouselEl, items, Math.max(d - 1, closestFloor));
+    switch (nodePressed) {
+      default:
+      case "nodeleft":
+        for (let d = degreesCurrent; d > closestFloor; d--) {
+          await onRotateToFinal(
+            carouselEl,
+            items,
+            Math.max(d - 1, closestFloor),
+          );
+        }
+        break;
+      case "noderight": {
+        const target = closestFloor + degreesPerStep;
+        for (let d = degreesCurrent; d < target; d++) {
+          await onRotateToFinal(carouselEl, items, Math.min(d + 1, target));
+        }
+        break;
+      }
     }
   } else if (direction === "right") {
-    const target = closestFloor + degreesPerStep;
-    for (let d = degreesCurrent; d < target; d++) {
-      await onRotateToFinal(carouselEl, items, Math.min(d + 1, target));
+    switch (nodePressed) {
+      default:
+      case "noderight":
+        const target = closestFloor + degreesPerStep;
+        for (let d = degreesCurrent; d < target; d++) {
+          await onRotateToFinal(carouselEl, items, Math.min(d + 1, target));
+        }
+        break;
+      case "nodeleft":
+        for (let d = degreesCurrent; d > closestFloor; d--) {
+          await onRotateToFinal(
+            carouselEl,
+            items,
+            Math.max(d - 1, closestFloor),
+          );
+        }
+        break;
     }
   } else {
     await onRotateToFinal(carouselEl, items, degreesCurrent);
