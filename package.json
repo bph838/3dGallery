@@ -1,6 +1,6 @@
 {
   "name": "3dgallery",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "The component is meant to display a 3D rotating carousel for use on a webpage.",
   "main": "index.js",
   "scripts": {
